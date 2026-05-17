@@ -37,19 +37,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const materialData = {
-        'CLT': { density: 470, carbon: 50, moisture: 12, urr: 0.95 },
-        'LVL': { density: 470, carbon: 50, moisture: 11, urr: 0.92 },
-        'Softwood plywood': { density: 470, carbon: 49, moisture: 10.5, urr: 0.88 },
-        'Softwood studwork': { density: 480, carbon: 50, moisture: 16, urr: 0.85 },
-        'Glulam': { density: 510, carbon: 50, moisture: 11, urr: 0.94 },
-        'Hardwood studwork': { density: 550, carbon: 49, moisture: 17.5, urr: 0.82 },
-        'Hardwood plywood': { density: 580, carbon: 49, moisture: 10.5, urr: 0.86 },
-        'Hardwood beech LVL': { density: 730, carbon: 48, moisture: 11, urr: 0.90 },
-        'Concrete blocks': { density: 600, carbon: 0, moisture: 5.5, urr: 0.10 },
-        'OSB': { density: 610, carbon: 47, moisture: 6.5, urr: 0.80 },
-        'MDF': { density: 680, carbon: 44, moisture: 7.5, urr: 0.75 },
-        'Chipboard': { density: 690, carbon: 43, moisture: 7.5, urr: 0.70 },
-        'Bamboo': { density: 700, carbon: 46, moisture: 10, urr: 0.85 }
+        'CLT': { density: 470, carbon: 50, moisture: 12, urrMin: 0.78, urrMax: 1.40, urr35: 1.17 },
+        'LVL': { density: 470, carbon: 50, moisture: 11, urrMin: 0.70, urrMax: 1.30, urr35: 1.10 },
+        'Softwood plywood': { density: 470, carbon: 49, moisture: 10.5, urrMin: 0.65, urrMax: 1.20, urr35: 1.05 },
+        'Softwood studwork': { density: 480, carbon: 50, moisture: 16, urrMin: 0.60, urrMax: 1.15, urr35: 1.00 },
+        'Glulam': { density: 510, carbon: 50, moisture: 11, urrMin: 0.75, urrMax: 1.35, urr35: 1.15 },
+        'Hardwood studwork': { density: 550, carbon: 49, moisture: 17.5, urrMin: 0.30, urrMax: 0.60, urr35: 0.45 },
+        'Hardwood plywood': { density: 580, carbon: 49, moisture: 10.5, urrMin: 0.35, urrMax: 0.65, urr35: 0.50 },
+        'Hardwood beech LVL': { density: 730, carbon: 48, moisture: 11, urrMin: 0.40, urrMax: 0.70, urr35: 0.55 },
+        'Concrete blocks': { density: 600, carbon: 0, moisture: 5.5, urrMin: 0.05, urrMax: 0.15, urr35: 0.10 },
+        'OSB': { density: 610, carbon: 47, moisture: 6.5, urrMin: 0.50, urrMax: 0.95, urr35: 0.75 },
+        'MDF': { density: 680, carbon: 44, moisture: 7.5, urrMin: 0.45, urrMax: 0.85, urr35: 0.65 },
+        'Chipboard': { density: 690, carbon: 43, moisture: 7.5, urrMin: 0.40, urrMax: 0.80, urr35: 0.60 },
+        'Bamboo': { density: 700, carbon: 46, moisture: 10, urrMin: 4.00, urrMax: 8.00, urr35: 5.80 }
     };
 
     // --- State ---
@@ -209,15 +209,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const volMax = area * data.wuiMax;
 
         const cltFactor = 470 * (1 / (1 + 0.12)) * 0.5 * (44 / 12);
+        const omittedFactor = 470 * 0.25; // kgCO2e/m3 based on IStructE v3 (0.25kgCO2e/kg)
+        
         const storageMin = (volMin * cltFactor) / 1000;
         const storageMax = (volMax * cltFactor) / 1000;
+        const omittedMin = (volMin * omittedFactor) / 1000;
+        const omittedMax = (volMax * omittedFactor) / 1000;
+        const netMin = storageMin - omittedMin;
+        const netMax = storageMax - omittedMax;
 
         document.getElementById('est-wui-range').textContent = `${data.wuiMin.toFixed(2)} - ${data.wuiMax.toFixed(2)}`;
         document.getElementById('est-vol-range').textContent = `${volMin.toFixed(0)} - ${volMax.toFixed(0)}`;
         document.getElementById('est-storage-range').textContent = `${storageMin.toFixed(1)} - ${storageMax.toFixed(1)}`;
+        document.getElementById('est-omitted-range').textContent = `${omittedMin.toFixed(1)} - ${omittedMax.toFixed(1)}`;
+        document.getElementById('est-net-range').textContent = `${netMin.toFixed(1)} - ${netMax.toFixed(1)}`;
         
         document.getElementById('est-result').style.display = 'block';
-        updateFinancialLvl2(storageMin, storageMax);
+        updateFinancialLvl2(netMin, netMax);
     });
 
     // --- LEVEL 3 LOGIC ---
@@ -231,36 +239,51 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mat) {
             editDensity.value = mat.density;
             editCarbon.value = mat.carbon;
-            editUrr.value = mat.urr;
+            editUrr.value = `${mat.urrMin.toFixed(2)} - ${mat.urrMax.toFixed(2)}`;
+            document.getElementById('edit_urr_35').value = mat.urr35.toFixed(2);
         }
     });
 
     document.getElementById('add-adv-elem').addEventListener('click', () => {
-        const area = parseFloat(document.getElementById('elem_area').value);
+        const volume = parseFloat(document.getElementById('elem_volume').value);
         const matName = advMaterial.value;
         const density = parseFloat(editDensity.value);
         const carbon = parseFloat(editCarbon.value) / 100;
-        const urr = parseFloat(editUrr.value);
+        const urrRange = editUrr.value;
+        const urr35 = parseFloat(document.getElementById('edit_urr_35').value);
         
-        const volume = area * 0.15; 
         const storage = (volume * density * (1 / (1 + 0.12)) * carbon * (44 / 12)) / 1000;
+        const omitted = (volume * density * 0.25) / 1000; // Using 0.25kgCO2e/kg as default
+        const net = storage - omitted;
 
-        lvl3Boq.push({ id: Date.now(), name: matName, area, storage, urr });
+        lvl3Boq.push({ id: Date.now(), name: matName, volume, storage, omitted, net, urrRange, urr35 });
         renderLvl3Boq();
     });
 
     function renderLvl3Boq() {
         const list = document.getElementById('adv-boq-list');
         list.innerHTML = '';
-        let total = 0;
+        let totalVol = 0, totalStorage = 0, totalOmitted = 0, totalNet = 0;
         lvl3Boq.forEach(item => {
-            total += item.storage;
+            totalVol += item.volume;
+            totalStorage += item.storage;
+            totalOmitted += item.omitted;
+            totalNet += item.net;
             const row = document.createElement('tr');
-            row.innerHTML = `<td>${item.name}</td><td>${item.area}</td><td>${item.storage.toFixed(3)}</td><td>${item.urr}</td><td><button class="btn btn-outline" style="padding: 2px 8px;" onclick="removeLvl3Item(${item.id})">×</button></td>`;
+            row.innerHTML = `<td>${item.name}</td><td>${item.volume.toFixed(3)}</td><td>${item.storage.toFixed(3)}</td><td>${item.omitted.toFixed(3)}</td><td>${item.net.toFixed(3)}</td><td style="font-size: 0.8rem;">${item.urrRange}<br><strong>35y: ${item.urr35.toFixed(2)}</strong></td><td><button class="btn btn-outline" style="padding: 2px 8px;" onclick="removeLvl3Item(${item.id})">×</button></td>`;
             list.appendChild(row);
         });
-        document.getElementById('adv-total-storage').textContent = total.toFixed(3);
-        updateFinancialLvl3(total);
+        document.getElementById('adv-total-storage').textContent = totalStorage.toFixed(3);
+        document.getElementById('adv-total-omitted').textContent = totalOmitted.toFixed(3);
+        document.getElementById('adv-total-net').textContent = totalNet.toFixed(3);
+
+        // Update Project Summary Cards
+        document.getElementById('adv-sum-vol').textContent = totalVol.toFixed(1);
+        document.getElementById('adv-sum-storage').textContent = totalStorage.toFixed(2);
+        document.getElementById('adv-sum-omitted').textContent = totalOmitted.toFixed(2);
+        document.getElementById('adv-sum-net').textContent = totalNet.toFixed(2);
+
+        updateFinancialLvl3(totalNet);
     }
 
     // --- FINANCIALS ---
@@ -272,28 +295,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const price = parseFloat(document.getElementById('value_method_lvl2').value);
         document.getElementById('est-financial-value-range').textContent = `€${(min * price).toLocaleString(undefined, {maximumFractionDigits:0})} - €${(max * price).toLocaleString(undefined, {maximumFractionDigits:0})}`;
     }
-    function updateFinancialLvl3(total) {
+    function updateFinancialLvl3(net) {
         const price = parseFloat(document.getElementById('value_method_lvl3').value);
-        document.getElementById('adv-financial-value').textContent = '€' + (total * price).toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('adv-financial-value').textContent = '€' + (net * price).toLocaleString(undefined, {minimumFractionDigits: 2});
     }
 
     function updateAllFinancials() {
         updateLvl1Calculations();
-        const estText = document.getElementById('est-storage-range').textContent;
+        const estText = document.getElementById('est-net-range').textContent;
         if (estText !== '—') {
             const parts = estText.split(' - ').map(parseFloat);
             updateFinancialLvl2(parts[0], parts[1]);
         }
-        updateFinancialLvl3(parseFloat(document.getElementById('adv-total-storage').textContent) || 0);
+        updateFinancialLvl3(parseFloat(document.getElementById('adv-total-net').textContent) || 0);
     }
 
     document.getElementById('value_method_lvl1').addEventListener('change', updateLvl1Calculations);
     document.getElementById('value_method_lvl2').addEventListener('change', () => {
-        const parts = document.getElementById('est-storage-range').textContent.split(' - ').map(parseFloat);
+        const parts = document.getElementById('est-net-range').textContent.split(' - ').map(parseFloat);
         updateFinancialLvl2(parts[0], parts[1]);
     });
     document.getElementById('value_method_lvl3').addEventListener('change', () => {
-        updateFinancialLvl3(parseFloat(document.getElementById('adv-total-storage').textContent));
+        updateFinancialLvl3(parseFloat(document.getElementById('adv-total-net').textContent));
     });
 
     advMaterial.dispatchEvent(new Event('change'));

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRCF Carbon removal & UWW Aligned Tool — Architools</title>
+    <link rel="stylesheet" href="/Styles/boilerplate-v3/ao-styles-v3.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-standard">
+
+    <header class="app-header no-print">
+        <div class="app-header-inner" style="justify-content: center; text-align: center;">
+            <div class="app-header-text">
+                <div class="app-title">CRCF Carbon Removal</div>
+                <div class="app-subtitle">EU Carbon Removal Certification Framework & Using Wood Well (UWW) Aligned</div>
+            </div>
+        </div>
+        <div class="app-tabs" style="justify-content: center;">
+            <button class="app-tab active" data-tab="methodology">STANDARD METHODOLOGY</button>
+            <button class="app-tab" data-tab="estimator">UWW ESTIMATOR</button>
+            <button class="app-tab" data-tab="building-data">UWW SIMPLE METHODOLOGY</button>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: var(--spacing-xl); padding-bottom: var(--spacing-2xl);">
+
+        <!-- LEVEL 1: STANDARD METHODOLOGY -->
+        <div id="methodology" class="tab-panel">
+            <div class="subheading">EU CRCF Standard Methodology</div>
+            
+            <div class="field-group">
+                <div class="field-group-title">Methodology Mode</div>
+                <div class="input-row" style="gap: 40px;">
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <input type="radio" id="mode_opt1" name="mode" value="opt1" checked style="margin-top: 5px;">
+                        <label for="mode_opt1" style="font-weight: normal; margin: 0;">
+                            <strong>Option 1: Standardised</strong><br>
+                            <span style="font-size: 0.85rem; color: var(--color-text-muted);">(New Offices / 4+ Storeys)</span>
+                        </label>
+                    </div>
+                    
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <input type="radio" id="mode_opt2" name="mode" value="opt2" style="margin-top: 5px;">
+                        <label for="mode_opt2" style="font-weight: normal; margin: 0;">
+                            <strong>Option 2: Activity-Specific</strong><br>
+                            <span style="font-size: 0.85rem; color: var(--color-text-muted);">(Renovations / Any Type)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-group-title">1. Add Bio-based Product</div>
+                <form id="biogenic-form">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="product_name">Product Name</label>
+                            <input type="text" id="product_name" placeholder="e.g., CLT Panels" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="building_element">Building Element</label>
+                            <select id="building_element" required>
+                                <option value="">-- Select Element --</option>
+                                <option value="foundations">Foundations / Ground Floor Slab</option>
+                                <option value="basement">Basement Elements</option>
+                                <option value="structure">Structural Frames, Slabs, Panels</option>
+                                <option value="insulation_basement">Basement Insulation</option>
+                                <option value="insulation_roof">Roof Insulation</option>
+                                <option value="insulation_wall">Floor, Ceiling, Wall Insulation</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="volume">Volume (m³)</label>
+                            <input type="number" id="volume" step="0.001" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="density">Density (kg/m³)</label>
+                            <input type="number" id="density" step="1" value="470">
+                        </div>
+                        <div class="form-group">
+                            <label for="moisture">Moisture (%)</label>
+                            <input type="number" id="moisture" step="0.1" value="12">
+                        </div>
+                        <div class="form-group">
+                            <label for="carbon_content">Carbon Content (%)</label>
+                            <input type="number" id="carbon_content" step="0.1" value="50">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="gwp_a1a3">A1-A3 (Manufacturing)</label>
+                            <input type="number" id="gwp_a1a3" step="0.001" value="0.05">
+                        </div>
+                        <div class="form-group">
+                            <label for="gwp_a4">A4 (Transport)</label>
+                            <input type="number" id="gwp_a4" step="0.001" value="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="gwp_a5">A5 (Installation)</label>
+                            <input type="number" id="gwp_a5" step="0.001" value="0.005">
+                        </div>
+                        <div class="form-group">
+                            <label for="data_quality">Data Quality Level</label>
+                            <select id="data_quality">
+                                <option value="0">Very Good (0% penalty)</option>
+                                <option value="0.005">Good (0.5% penalty)</option>
+                                <option value="0.01">Fair (1% penalty)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field-group-title">Sustainability Checklist (Section 6)</div>
+                    <div class="info-box" style="margin-bottom: var(--spacing-md);">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="checkbox" id="sust_wood" checked style="width: auto;">
+                                <label for="sust_wood" style="margin: 0; font-weight: normal;">Wood: 70% from sustainable/recycled sources (6.1.1)</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="checkbox" id="sust_circular" checked style="width: auto;">
+                                <label for="sust_circular" style="margin: 0; font-weight: normal;">Circular: Recyclability not compromised by chemicals (6.1.3)</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="checkbox" id="sust_pollution" checked style="width: auto;">
+                                <label for="sust_pollution" style="margin: 0; font-weight: normal;">Pollution: Formaldehyde/VOC limits met (6.1.4)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: var(--spacing-md);">
+                        <button type="submit" class="btn btn-outline">Calculate & Validate</button>
+                        <button type="button" id="add-to-boq" class="btn btn-primary">Add to BoQ</button>
+                    </div>
+                </form>
+
+                <div id="biogenic-result" class="info-box info-box-success" style="display:none; margin-top: 20px;">
+                    Storage: <span id="storage-value">0</span> kgCO2 | 
+                    Adj. Emissions: <span id="emissions-value">0</span> kgCO2
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-group-title">2. Bill of Quantities</div>
+                <div class="table-container">
+                    <table id="boq-table">
+                        <thead>
+                            <tr>
+                                <th>Element / Product</th>
+                                <th>Volume</th>
+                                <th>Storage (t)</th>
+                                <th>Emissions (t)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="boq-list"></tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <th colspan="2">TOTALS:</th>
+                                <th id="boq-total-vol">0</th>
+                                <th id="boq-total-storage">0.00</th>
+                                <th id="boq-total-emissions">0.00</th>
+                                <th>(tonnes)</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-group-title">3. Compliance & Net Benefit (TNCRB)</div>
+                <div id="baseline-section" class="opt2-only" style="display:none; margin-bottom: 20px;">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="base_storage">Baseline Storage (tCO2)</label>
+                            <input type="number" id="base_storage" step="0.1" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="base_emissions">Baseline Emissions (tCO2)</label>
+                            <input type="number" id="base_emissions" step="0.1" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tncrb-comparison">
+                    <div class="comp-col">
+                        <strong>Activity Net</strong>
+                        <div id="activity-net-val">0.00</div>
+                    </div>
+                    <div class="comp-sign">&gt;</div>
+                    <div class="comp-col">
+                        <strong>Baseline Net</strong>
+                        <div id="baseline-net-val">0.00</div>
+                    </div>
+                </div>
+                <div id="compliance-result" class="info-box" style="text-align: center;">Pending Calculation...</div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-group-title">4. Risk Assessment & Buffer Rate</div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label for="storage_period">Claimed Storage Period</label>
+                        <select id="storage_period">
+                            <option value="0.03">35 Years (3% Buffer)</option>
+                            <option value="0.06">50 Years (6% Buffer)</option>
+                            <option value="0.15">100 Years (15% Buffer)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Climate & Building Risks</label>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="checkbox" id="risk_flooding" data-rate="0.005" style="width: auto;">
+                                <label for="risk_flooding" style="margin: 0; font-weight: normal;">Flooding / Storm Surge (0.5%)</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="checkbox" id="risk_subsidence" data-rate="0.005" style="width: auto;">
+                                <label for="risk_subsidence" style="margin: 0; font-weight: normal;">Subsidence / Erosion (0.5%)</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="checkbox" id="risk_moisture" data-rate="0.002" style="width: auto;">
+                                <label for="risk_moisture" style="margin: 0; font-weight: normal;">Moisture Ingress (0.2%)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="risk-summary" class="info-box info-box-warning">
+                    <strong>Total Buffer Rate: <span id="total-buffer-rate">3.0</span>%</strong><br>
+                    Units to be allocated to buffer: <span id="buffer-units">0.00</span> tCO2eq
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-group-title">5. Final Certification Summary</div>
+                <div class="grid grid-3">
+                    <div class="stat-card">
+                        <div class="stat-label">Mode</div>
+                        <div class="stat-value" id="sum-mode">Option 1</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Status</div>
+                        <div class="stat-value" id="sum-compliance">Pending</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Net Benefit</div>
+                        <div class="stat-value" id="sum-tncrb">0.00 t</div>
+                    </div>
+                </div>
+                
+                <div class="value-highlight-box">
+                    <h4>Potential Carbon Offset Value</h4>
+                    <div class="amount" id="sum-financial-value">€0.00</div>
+                    <div class="form-group" style="width: 200px; margin: 10px auto;">
+                        <select id="value_method_lvl1" class="no-print">
+                            <option value="76">EU ETS (~€76/t)</option>
+                            <option value="49">UK ETS (~€49/t)</option>
+                            <option value="20">Nature-Based Premium (€20/t)</option>
+                            <option value="5">Voluntary Avg (€5/t)</option>
+                            <option value="85">MAC (€85/t)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group no-print" style="margin-top: 20px; justify-content: center; display: flex;">
+                    <button onclick="window.print()" class="btn btn-outline">Download / Print Report</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 2: UWW ESTIMATOR -->
+        <div id="estimator" class="tab-panel" style="display:none;">
+            <div class="subheading">UWW Aligned Estimator</div>
+            
+            <div class="field-group">
+                <div class="field-group-title">Input Parameters</div>
+                <form id="uww-estimator-form">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="est_area">Building Area (GIA/GSSA m²)</label>
+                            <input type="number" id="est_area" value="1000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="est_str_type">Structural Material Type</label>
+                            <select id="est_str_type" required>
+                                <option value="all-timber">All-Timber</option>
+                                <option value="primarily-timber">Primarily Timber</option>
+                                <option value="mixed">Mixed (e.g. Timber on Concrete Podium)</option>
+                                <option value="hybrid">Hybrid (Post & Beam + Concrete Core)</option>
+                                <option value="mixed-composite">Mixed Composite</option>
+                                <option value="composite">Composite</option>
+                                <option value="concrete">Concrete (with some timber)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="est_bio_pct">Structural Bio % (Typical for type)</label>
+                        <select id="est_bio_pct"></select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Estimate Carbon Storage</button>
+                </form>
+            </div>
+
+            <div id="est-result" style="display:none;">
+                <div class="grid grid-3">
+                    <div class="stat-card">
+                        <div class="stat-label">WUI Range (m³/m²)</div>
+                        <div class="stat-value" id="est-wui-range">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Timber Volume (m³)</div>
+                        <div class="stat-value" id="est-vol-range">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Stored Carbon (t)</div>
+                        <div class="stat-value" id="est-storage-range">—</div>
+                    </div>
+                </div>
+
+                <div class="value-highlight-box">
+                    <h4>Potential Carbon Value Range</h4>
+                    <div class="amount" id="est-financial-value-range">€0.00 - €0.00</div>
+                    <div class="form-group" style="width: 200px; margin: 10px auto;">
+                        <select id="value_method_lvl2" class="no-print">
+                            <option value="76">EU ETS (~€76/t)</option>
+                            <option value="49">UK ETS (~€49/t)</option>
+                            <option value="20">Nature-Based Premium (€20/t)</option>
+                            <option value="5">Voluntary Avg (€5/t)</option>
+                            <option value="85">MAC (€85/t)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 3: UWW SIMPLE METHODOLOGY -->
+        <div id="building-data" class="tab-panel" style="display:none;">
+            <div class="subheading">UWW Simple Methodology</div>
+            
+            <div class="field-group">
+                <div class="field-group-title">Project Data</div>
+                <form id="adv-building-form-data">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="adv_name">Project Name</label>
+                            <input type="text" id="adv_name" placeholder="My Sustainable Project">
+                        </div>
+                        <div class="form-group">
+                            <label for="adv_gia">Total GIA (m²)</label>
+                            <input type="number" id="adv_gia" value="1000">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="field-group">
+                <div class="field-group-title">Element Data</div>
+                <form id="adv-element-form">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="elem_area">Element Area (m²)</label>
+                            <input type="number" id="elem_area" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="elem_material">Material Type</label>
+                            <select id="elem_material">
+                                <option value="CLT">CLT</option>
+                                <option value="LVL">Structural timber – LVL</option>
+                                <option value="Softwood plywood">Softwood plywood</option>
+                                <option value="Softwood studwork">Softwood studwork/framing</option>
+                                <option value="Glulam">Glulam</option>
+                                <option value="Hardwood studwork">Hardwood studwork/framing</option>
+                                <option value="Hardwood plywood">Hardwood plywood</option>
+                                <option value="Hardwood beech LVL">Hardwood beech LVL</option>
+                                <option value="Concrete blocks">Lightweight concrete blocks (AAC)</option>
+                                <option value="OSB">OSB</option>
+                                <option value="MDF">MDF</option>
+                                <option value="Chipboard">Chipboard</option>
+                                <option value="Bamboo">Bamboo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>Density (kg/m³)</label>
+                            <input type="number" id="edit_density">
+                        </div>
+                        <div class="form-group">
+                            <label>Carbon Content (%)</label>
+                            <input type="number" id="edit_carbon">
+                        </div>
+                        <div class="form-group">
+                            <label>URR Number</label>
+                            <input type="number" id="edit_urr" step="0.01" readonly>
+                        </div>
+                    </div>
+                    <button type="button" id="add-adv-elem" class="btn btn-primary">Add Element</button>
+                </form>
+            </div>
+
+            <div class="field-group">
+                <div class="field-group-title">Project Elements</div>
+                <div class="table-container">
+                    <table id="adv-boq-table">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Area (m²)</th>
+                                <th>Storage (t)</th>
+                                <th>URR</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adv-boq-list"></tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <th colspan="2">TOTAL STORAGE:</th>
+                                <th id="adv-total-storage">0.00</th>
+                                <th colspan="2">tonnes CO2eq</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="value-highlight-box" id="adv-value-box">
+                <h4>Project Cost Value</h4>
+                <div class="amount" id="adv-financial-value">€0.00</div>
+                <div class="form-group" style="width: 200px; margin-top: 10px;">
+                    <select id="value_method_lvl3" class="no-print">
+                        <option value="76">EU ETS (~€76/t)</option>
+                        <option value="49">UK ETS (~€49/t)</option>
+                        <option value="20">Nature-Based Premium (€20/t)</option>
+                        <option value="5">Voluntary Avg (€5/t)</option>
+                        <option value="85">MAC (€85/t)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>Information and data provided by:</p>
+        <ul>
+            <li>Using Wood Well: <a href="https://www.icd.uni-stuttgart.de/research/research-projects/using-wood-well/" target="_blank">icd.uni-stuttgart.de</a></li>
+            <li>IStructE Carbon Tool: <a href="https://www.istructe.org/resources/guidance/the-structural-carbon-tool/" target="_blank">istructe.org</a></li>
+        </ul>
+        <p><em>Note: URR (Use Renewal Ratio) identifies materials where storage duration exceeds biological renewal time, justifying co-benefits under Article 7 of Regulation (EU) 2024/3012.</em></p>
+        <p>Architools &mdash; <a href="https://architools.drawingtable.net">architools.drawingtable.net</a></p>
+    </footer>
+
+    <script src="js/calculator.js"></script>
+</body>
+</html>
